@@ -26,7 +26,15 @@ app.post("/account", (request, response) => {
     'statement': []
   })
 
-  return response.status(200).send()
+  return response.status(200).json({ message: "account created" })
+})
+
+app.get("/statement/:cpf", (request, response) => {
+  const { cpf } = request.params;
+
+  const customerExists = customers.find(customer => customer.cpf === cpf)
+
+  return response.json(customerExists.statement)
 })
 
 app.listen(3000)
