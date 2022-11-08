@@ -13,7 +13,7 @@ app.get('/account', (request, response) => {
 function verifyIfExistsAccountCPF(request, response, next) {
   const { cpf } = request.params;
 
-  const customer = customers.some(customer => customer.cpf === cpf);
+  const customer = customers.find(customer => customer.cpf === cpf);
 
   if (!customer) {
     return response.status(400).json({ error: "Customer Not Found" });
@@ -27,6 +27,11 @@ function verifyIfExistsAccountCPF(request, response, next) {
 app.post("/account", (request, response) => {
   const { cpf, name } = request.body;
 
+  const customerAlreadyExists = customers.some(customer => customer.cpf === cpf);
+
+  if (customerAlreadyExists) {
+    return response.status(400).json({ message: "Customer Already Exists" });
+  }
   customers.push({
     id: uuidv4(),
     cpf,
@@ -38,7 +43,7 @@ app.post("/account", (request, response) => {
 })
 
 app.get("/statement/:cpf", verifyIfExistsAccountCPF, (request, response) => {
-  const { customer } = request.customer
+  const customer = request.customer
 
   return response.json(customer.statement)
 })
